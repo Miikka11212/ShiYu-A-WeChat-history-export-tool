@@ -1,11 +1,25 @@
 # 拾语 微信记录导出 Word
 
+**简体中文** | [English](README.en.md)
+
 Windows 桌面程序，界面只保留微信进程检测、聊天对象下拉框和 DOCX 导出。
+
+## 下载 Windows 软件
+
+**[下载 Windows x64 版（ZIP）](https://github.com/Miikka11212/ShiYu-A-WeChat-history-export-tool/releases/latest/download/Shiyu-Windows-x64.zip)** · [所有版本](https://github.com/Miikka11212/ShiYu-A-WeChat-history-export-tool/releases)
+
+无需安装 Python 或 Git。下载后把整个 ZIP 解压到有写入权限的文件夹，双击 **Shiyu.exe**，保留旁边的 `_internal` 文件夹。不要在压缩包预览中直接运行。
+首次使用选择自己的微信数据目录，再点击“开始检测微信”。界面目前为中文，发布包尚未数字签名。
+
+Download the ZIP, extract it, and open **Shiyu.exe**. No Python or Git required.
+Windows 10/11 x64; live import tested with WeChat 4.1.13.12.
+
+GitHub 的 “Source code” ZIP 是源码，不含可运行程序；源码用户请先执行下面的安装步骤。
 
 ## 使用
 
-1. 双击 `start.bat`，或运行 `dist\Shiyu\Shiyu.exe`。
-2. 软件自动进入检测。完全退出微信，再从桌面重新启动并登录微信。
+1. 下载版双击解压后的 `Shiyu.exe`；源码版安装依赖后双击 `start.bat`。
+2. 选择自己的微信数据目录并开始检测（配置过目录时自动检测）。完全退出微信，再从桌面重新启动并登录微信。
 3. 等到软件显示“密钥已自动获取并校验”。在微信中打开一张聊天原图，然后点击“读取聊天与图片”。图片密钥尚未就绪时会继续等待，请保持图片窗口开启。
 4. 在下拉框中选择联系人或群聊，点击“导出 Word (.docx)”。
 
@@ -44,7 +58,7 @@ Word 按消息时间排序，包含完整日期、时间、发送者、聊天对
 
 ## 从源码运行
 
-需要 Windows 10/11 x64、Python 3.12+：
+需要 Windows 10/11 x64、Python 3.12（已验证版本）：
 
 ```powershell
 powershell -File setup.ps1
@@ -79,3 +93,16 @@ powershell -File build.ps1
 
 公开技术资料见 `docs/research.md`；许可证见 `THIRD_PARTY_NOTICES.md`。
 英文逐文件说明见 [docs/architecture.md](docs/architecture.md)。
+
+## 发布新版本
+
+修改 `VERSION` 的版本号后推送到 `main`，GitHub Actions 会安装依赖、运行测试、构建程序，并测试解压后的 ZIP，再创建对应的 GitHub Release。也可在 Actions 中手动运行 Windows release；已有版本不会覆盖。
+
+本地制作下载包：
+
+```powershell
+powershell -File build.ps1 -PackageOnly
+.\.venv\Scripts\python.exe tools/package_release.py
+```
+
+下载包输出到 `artifacts/release/`，只从干净的构建目录收集程序及依赖，不打包日常使用的 `dist/Shiyu/data` 或 `local.json`。

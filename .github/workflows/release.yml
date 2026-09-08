@@ -1,0 +1,57 @@
+name: Windows release
+on:
+  push:
+    branches: [main]
+    paths:
+      - VERSION
+      - .github/workflows/release.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: windows-2022
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          architecture: x64
+      - name: Install dependencies
+        run: ./setup.ps1
+      - name: Run tests
+        run: |
+          ./.venv/Scripts/python.exe -m pytest -q
+          if ($LASTEXITCODE -ne 0) { throw 'Tests failed.' }
+      - name: Build clean app
+        run: ./build.ps1 -PackageOnly
+      - name: Package and test extracted download
+        run: |
+          ./.venv/Scripts/python.exe tools/package_release.py
+          if ($LASTEXITCODE -ne 0) { throw 'Release validation failed.' }
+      - name: Publish versioned download
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          $version = (Get-Content -Raw VERSION).Trim()
+          if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Invalid version.' }
+          $tag = "v$version"
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -eq 0) {
+            throw "Release $tag already exists. Increase VERSION for a new release."
+          }
+          gh release create $tag artifacts/release/Shiyu-Windows-x64.zip artifacts/release/SHA256SUMS.txt --target $env:GITHUB_SHA --title "Shiyu $tag - Windows x64" --notes-file docs/RELEASE-NOTES.md --latest
+          if ($LASTEXITCODE -ne 0) { throw 'Release publication failed.' }

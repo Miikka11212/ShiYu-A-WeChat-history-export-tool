@@ -1,0 +1,23 @@
+Shiyu / 拾语 - Windows WeChat chat export
+
+1. Extract the entire ZIP to a writable folder, such as Documents.
+   Do not run the EXE inside the ZIP preview.
+2. Open Shiyu.exe. Keep the _internal folder beside it.
+   Python, Git, and Microsoft Word are not required to export.
+3. Choose your own xwechat_files folder and click 开始检测微信.
+4. Keep Shiyu open. Fully exit WeChat from its menu, restart it, and log in.
+   Closing the WeChat window alone may leave it running.
+5. Once the key is captured, open an original chat image in WeChat,
+   then click 读取聊天与图片.
+6. Choose a conversation and click 导出 Word (.docx).
+
+Archives and exports are saved in the data folder beside the app.
+Keep your archives when upgrading. Never share data or your local.json.
+Windows 10/11 x64. Live import tested with WeChat 4.1.13.12.
+Other versions may need adaptation. The interface is currently Chinese.
+This build is not digitally signed. See README.md for troubleshooting.
+
+完整解压后打开 Shiyu.exe，不要单独移动 EXE。
+首次使用选择自己的微信数据目录，再点击“开始检测微信”。
+保持拾语开启，完全退出微信后重新启动并登录。
+成功获取后打开聊天原图，再读取聊天与图片，选择对象导出。

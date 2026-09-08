@@ -118,3 +118,13 @@ release. A local thumbnail cannot be turned into an unavailable original image.
 Voice/video transcription, deleted-message recovery, and cloud-media downloading
 are outside this application's current scope. Automated DOCX pagination review
 remains unavailable in the development environment without the required renderer.
+
+
+Release files added:
+- README.en.md: English README with a link back to the Chinese README. Both are included in the download.
+- VERSION: numeric release version; updating it on main starts the Windows release workflow.
+- .github/workflows/release.yml: builds on Windows with Python 3.12, runs tests, verifies the extracted ZIP, and publishes a GitHub Release.
+- tools/package_release.py: packages the clean build with dependencies and notices, rejects personal data, verifies the extracted app, and writes a SHA-256 checksum.
+- tests/test_release.py: validates package completeness, privacy exclusions, and the exact permitted python-docx template.
+- docs/START-HERE.txt: first-run instructions shipped inside the download.
+- docs/RELEASE-NOTES.md: user-facing release notes, including compatibility limits.

@@ -1,3 +1,4 @@
+param([switch]$PackageOnly)
 $ErrorActionPreference = 'Stop'
 Set-Location -LiteralPath $PSScriptRoot
 $env:PYTHONNOUSERSITE = '1'
@@ -11,11 +12,13 @@ $env:PYINSTALLER_CONFIG_DIR = "$PSScriptRoot\artifacts\pyinstaller-cache"
 if ($LASTEXITCODE -ne 0) { throw 'License collection failed.' }
 & '.\.venv\Scripts\python.exe' -m PyInstaller --clean --noconfirm --windowed --onedir --workpath artifacts\pyinstaller-work --distpath artifacts\package-build --name Shiyu --collect-all frida --collect-all imageio_ffmpeg --exclude-module PySide6.QtWebEngineCore --exclude-module PySide6.QtWebEngineWidgets --exclude-module PySide6.QtQml --exclude-module PySide6.QtQuick main.py
 if ($LASTEXITCODE -ne 0) { throw 'Build failed.' }
+if ($PackageOnly) { Write-Output 'Built clean artifacts\package-build\Shiyu'; exit 0 }
 # The release directory may contain real archives and exports. Build in a
 # separate disposable directory and copy program files, preserving user data.
 New-Item -ItemType Directory -Path 'dist\Shiyu' -Force | Out-Null
 Get-ChildItem -LiteralPath 'artifacts\package-build\Shiyu' | Copy-Item -Destination 'dist\Shiyu' -Recurse -Force
 Copy-Item -LiteralPath 'README.md' -Destination 'dist\Shiyu\README.md'
+Copy-Item -LiteralPath 'README.en.md' -Destination 'dist\Shiyu\README.en.md'
 Copy-Item -LiteralPath 'THIRD_PARTY_NOTICES.md' -Destination 'dist\Shiyu\THIRD_PARTY_NOTICES.md'
 Copy-Item -LiteralPath 'artifacts\licenses' -Destination 'dist\Shiyu' -Recurse -Force
 if (Test-Path -LiteralPath 'local.json') { Copy-Item -LiteralPath 'local.json' -Destination 'dist\Shiyu\local.json' }
